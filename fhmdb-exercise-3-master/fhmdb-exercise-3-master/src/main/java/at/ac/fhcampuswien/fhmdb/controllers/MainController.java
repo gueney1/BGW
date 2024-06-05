@@ -31,6 +31,21 @@ public class MainController implements Observer {
 
     private HamburgerBasicCloseTransition transition;
 
+    private static volatile MainController mainControllerInstance;
+
+    private MainController(){}
+
+    public static MainController getInstance(){
+        if(mainControllerInstance == null){
+            synchronized(MainController.class){
+                if(mainControllerInstance == null){
+                    mainControllerInstance = new MainController();
+                }
+            }
+        }
+        return mainControllerInstance;
+    }
+
     public void initialize() {
         transition = new HamburgerBasicCloseTransition(hamburgerMenu);
         transition.setRate(-1);
@@ -68,6 +83,8 @@ public class MainController implements Observer {
 
     public void setContent(String fxmlPath){
         FXMLLoader loader = new FXMLLoader(MainController.class.getResource(fxmlPath));
+        ControllerFactoryInterface controllerFactory = ControllerFactory.getInstance();
+        loader.setControllerFactory(controllerFactory :: getController);
         try {
             mainPane.setCenter(loader.load());
         } catch (Exception e) {
@@ -121,6 +138,7 @@ public class MainController implements Observer {
     public void navigateToMovielist() {
         setContent(UIComponent.MOVIELIST.path);
     }
+
     @Override
     public void update(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

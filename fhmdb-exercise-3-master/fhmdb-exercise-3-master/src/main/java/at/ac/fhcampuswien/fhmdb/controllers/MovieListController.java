@@ -57,6 +57,21 @@ public class MovieListController implements Initializable {
 
     protected SortedState sortedState = SortedState.NONE; // Deklarieren und initialisieren Sie die Variable
 
+    private static volatile MovieListController movieListControllerInstance;
+
+    private MovieListController(){}
+
+    public static MovieListController getInstance(){
+        if(movieListControllerInstance == null){
+            synchronized(MovieListController.class){
+                if(movieListControllerInstance == null){
+                    movieListControllerInstance = new MovieListController();
+                }
+            }
+        }
+        return movieListControllerInstance;
+    }
+
     private final ClickEventHandler onAddToWatchlistClicked = (clickedItem) -> {
         if (clickedItem instanceof Movie movie) {
             WatchlistMovieEntity watchlistMovieEntity = new WatchlistMovieEntity(movie.getId());

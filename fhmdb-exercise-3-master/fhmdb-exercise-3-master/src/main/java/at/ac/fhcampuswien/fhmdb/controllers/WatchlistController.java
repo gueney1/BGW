@@ -24,6 +24,19 @@ public class WatchlistController implements Initializable {
 
     protected ObservableList<MovieEntity> observableWatchlist = FXCollections.observableArrayList();
 
+    private static volatile WatchlistController watchlistControllerInstance;
+
+    public static WatchlistController getInstance(){
+        if(watchlistControllerInstance == null){
+            synchronized(WatchlistController.class){
+                if(watchlistControllerInstance == null){
+                    watchlistControllerInstance = new WatchlistController();
+                }
+            }
+        }
+        return watchlistControllerInstance;
+    }
+
     private final ClickEventHandler onRemoveFromWatchlistClicked = (o) -> {
         if (o instanceof MovieEntity) {
             MovieEntity movieEntity = (MovieEntity) o;
