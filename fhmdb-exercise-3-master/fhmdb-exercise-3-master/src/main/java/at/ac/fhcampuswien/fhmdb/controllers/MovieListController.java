@@ -160,6 +160,84 @@ public class MovieListController implements Initializable {
         }
     }
 
+    public List<Movie> filterByQuery(List<Movie> movies, String query){
+        if(query == null || query.isEmpty()) return movies;
+
+        if(movies == null) {
+            throw new IllegalArgumentException("movies must not be null");
+        }
+
+        return movies.stream().filter(movie ->
+                        movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                                movie.getDescription().toLowerCase().contains(query.toLowerCase()))
+                .toList();
+    }
+
+    public List<Movie> filterByGenre(List<Movie> movies, Genre genre){
+        if(genre == null) return movies;
+
+        if(movies == null) {
+            throw new IllegalArgumentException("movies must not be null");
+        }
+
+        return movies.stream().filter(movie -> movie.getGenres().contains(genre)).toList();
+    }
+
+    public void applyAllFilters(String searchQuery, Object genre) {
+        List<Movie> filteredMovies = allMovies;
+
+        if (!searchQuery.isEmpty()) {
+            filteredMovies = filterByQuery(filteredMovies, searchQuery);
+        }
+
+        if (genre != null && !genre.toString().equals("No filter")) {
+            filteredMovies = filterByGenre(filteredMovies, Genre.valueOf(genre.toString()));
+        }
+
+        observableMovies.clear();
+        observableMovies.addAll(filteredMovies);
+    }
+
+    public void searchBtnClicked(ActionEvent actionEvent) {
+        String searchQuery = searchField.getText().trim().toLowerCase();
+        String releaseYear = validateComboboxValue(releaseYearComboBox.getSelectionModel().getSelectedItem());
+        String ratingFrom = validateComboboxValue(ratingFromComboBox.getSelectionModel().getSelectedItem());
+        String genreValue = validateComboboxValue(genreComboBox.getSelectionModel().getSelectedItem());
+
+        Genre genre = null;
+        if(genreValue != null) {
+            genre = Genre.valueOf(genreValue);
+        }
+
+        List<Movie> movies = getMovies(searchQuery, genre, releaseYear, ratingFrom);
+
+        setMovies(movies);
+        setMovieList(movies);
+        // applyAllFilters(searchQuery, genre);
+
+        if(sortedState != SortedState.NONE) {
+            sortMovies();
+        }
+    }
+
+    public String validateComboboxValue(Object value) {
+        if(value != null && !value.toString().equals("No filter")) {
+            return value.toString();
+        }
+        return null;
+    }
+
+    public List<Movie> getMovies(String searchQuery, Genre genre, String releaseYear, String ratingFrom) {
+        try{
+            return MovieAPI.getAllMovies(searchQuery, genre, releaseYear, ratingFrom);
+        }catch (MovieApiException e){
+            System.out.println(e.getMessage());
+            UserDialog dialog = new UserDialog("MovieApi Error", "Could not load movies from api.");
+            dialog.show();
+            return new ArrayList<>();
+        }
+    }
+
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
     }
