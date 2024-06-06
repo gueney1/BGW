@@ -20,6 +20,7 @@ public class FhmdbApplication extends Application {
     @Override
     public void start(Stage stage) {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource(UIComponent.HOME.path));
+        //Use the custom controller factory to provide the appropriate controller for the fxml file
         ControllerFactoryInterface controllerFactory = ControllerFactory.getInstance();
         fxmlLoader.setControllerFactory(controllerFactory :: getController);
 

@@ -60,11 +60,11 @@ public class MainController {
         navigateToMovielist();
 
         //TODO: To look at when EVERYONE IS AWAKE
-        MovieListController mlc = MovieListController.getInstance();
-        //WatchlistController wlc = WatchlistController.getInstance();
+        //MovieListController mlc = MovieListController.getInstance();
+        WatchlistController wlc = WatchlistController.getInstance();
         WatchlistRepository wlr = WatchlistRepository.getInstance();
-        wlr.addObserver(mlc);
-       //wlr.addObserver(wlc);
+        //wlr.addObserver(mlc);
+        wlr.addObserver(wlc);
 
     }
 
@@ -93,6 +93,7 @@ public class MainController {
 
     public void setContent(String fxmlPath){
         FXMLLoader loader = new FXMLLoader(MainController.class.getResource(fxmlPath));
+        //Use the custom controller factory to provide the appropriate controller for the fxml file
         ControllerFactoryInterface controllerFactory = ControllerFactory.getInstance();
         loader.setControllerFactory(controllerFactory :: getController);
         try {

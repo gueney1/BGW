@@ -28,6 +28,8 @@ public class WatchlistController implements Initializable, Observer {
 
     private static volatile WatchlistController watchlistControllerInstance;
 
+    private WatchlistController(){}
+
     public static WatchlistController getInstance(){
         if(watchlistControllerInstance == null){
             synchronized(WatchlistController.class){
@@ -58,6 +60,7 @@ public class WatchlistController implements Initializable, Observer {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        observableWatchlist.clear();
         List<WatchlistMovieEntity> watchlist = new ArrayList<>();
         try {
             //watchlistRepository = new WatchlistRepository();

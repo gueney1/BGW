@@ -29,20 +29,24 @@ public class ControllerFactory implements ControllerFactoryInterface {
     //Answer: try catch block with dynamic instantiation of the controller class -> commented out
     @Override
     public Object getController(Class <?> controllerClass){
-        if(controllerClass == MainController.class){
+        /*if(controllerClass == MainController.class){
             return MainController.getInstance();
         } else if (controllerClass == MovieListController.class){
             return MovieListController.getInstance();
         } else if (controllerClass == WatchlistController.class){
             return WatchlistController.getInstance();
         }
-        return null;
-        /*try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e){
+        return null;*/
+        try {
+            // Use reflection to find the getInstance method
+            java.lang.reflect.Method getInstanceMethod = controllerClass.getMethod("getInstance");
+
+            // Invoke the getInstance method on the controller class
+            return getInstanceMethod.invoke(null);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }*/
+        }
     }
 
 

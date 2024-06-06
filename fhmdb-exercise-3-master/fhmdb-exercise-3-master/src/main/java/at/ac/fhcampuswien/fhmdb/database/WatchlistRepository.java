@@ -42,26 +42,29 @@ public class WatchlistRepository implements Observable {
         if (isMovieInWatchlist(movie)) {
             notifyObservers("Movie already on watchlist");
             return 0;
-        }
-        try {
-            // only add movie if it does not exist yet
-            long count = dao.queryBuilder().where().eq("apiId", movie.getApiId()).countOf();
-            if (count == 0) {
-                notifyObservers("Movie was added to watchlist");
-                return dao.create(movie);
-            } else {
-                notifyObservers("Movie already in watchlist");
-                return 0;
+        } else {
+            try {
+                // only add movie if it does not exist yet
+                long count = dao.queryBuilder().where().eq("apiId", movie.getApiId()).countOf();
+                if (count == 0) {
+                    notifyObservers("Movie was added to watchlist");
+                    return dao.create(movie);
+                } else {
+                    notifyObservers("Movie already in watchlist");
+                    return 0;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new DataBaseException("Error while adding to watchlist");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new DataBaseException("Error while adding to watchlist");
         }
     }
 
     private boolean isMovieInWatchlist(WatchlistMovieEntity movie) throws DataBaseException {
         try {
             long count = dao.queryBuilder().where().eq("apiId", movie.getApiId()).countOf();
+            System.out.println("Movie Api Id is: " + movie.getApiId()); //TODO: Remove
+            System.out.println("Count is: " + count); //TODO: Remove
             return count > 0;
         } catch (Exception e) {
             e.printStackTrace();
