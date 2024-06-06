@@ -35,7 +35,7 @@ public class MainController implements Observer {
 
     private MainController(){}
 
-    public static MainController getInstance(){
+    public static MainController getInstance(){  //Methode zur Rückgabe der Singleton-Instanz
         if(mainControllerInstance == null){
             synchronized(MainController.class){
                 if(mainControllerInstance == null){
