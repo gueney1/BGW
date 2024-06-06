@@ -36,6 +36,10 @@ public class WatchlistRepository implements Observable{
         }
     }
     public int addToWatchlist(WatchlistMovieEntity movie) throws DataBaseException {
+        if (isMovieInWatchlist(movie)) {
+            notifyObservers("Movie already on watchlist");
+            return 0;
+        }
         try {
             // only add movie if it does not exist yet
             long count = dao.queryBuilder().where().eq("apiId", movie.getApiId()).countOf();
@@ -49,6 +53,16 @@ public class WatchlistRepository implements Observable{
         } catch (Exception e) {
             e.printStackTrace();
             throw new DataBaseException("Error while adding to watchlist");
+        }
+    }
+
+    private boolean isMovieInWatchlist(WatchlistMovieEntity movie) throws DataBaseException {
+        try {
+            long count = dao.queryBuilder().where().eq("apiId", movie.getApiId()).countOf();
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DataBaseException("Error while checking if movie is in watchlist");
         }
     }
 
