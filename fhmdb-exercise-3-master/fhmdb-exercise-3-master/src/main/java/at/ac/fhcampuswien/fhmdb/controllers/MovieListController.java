@@ -7,6 +7,7 @@ import at.ac.fhcampuswien.fhmdb.database.*;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.enums.SortedState; // Stellen Sie sicher, dass dies korrekt importiert ist
+import at.ac.fhcampuswien.fhmdb.observerPattern.Observer;
 import at.ac.fhcampuswien.fhmdb.statePattern.AscendingState;
 import at.ac.fhcampuswien.fhmdb.statePattern.DescendingState;
 import at.ac.fhcampuswien.fhmdb.statePattern.MovieSorter;
@@ -21,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MovieListController implements Initializable {
+public class MovieListController implements Initializable, Observer {
     @FXML
     public JFXButton searchBtn;
 
@@ -255,5 +257,14 @@ public class MovieListController implements Initializable {
 
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
+    }
+
+    @Override
+    public void update(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("MovieListController");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

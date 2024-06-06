@@ -1,5 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.controllers;
 
+import at.ac.fhcampuswien.fhmdb.database.DataBaseException;
+import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.enums.UIComponent;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.observerPattern.Observer;
@@ -17,7 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class MainController implements Observer {
+public class MainController {
     @FXML
     public JFXHamburger hamburgerMenu;
 
@@ -46,7 +48,7 @@ public class MainController implements Observer {
         return mainControllerInstance;
     }
 
-    public void initialize() {
+    public void initialize() throws DataBaseException {
         transition = new HamburgerBasicCloseTransition(hamburgerMenu);
         transition.setRate(-1);
         drawer.toBack();
@@ -56,6 +58,14 @@ public class MainController implements Observer {
         });
         // start with home view
         navigateToMovielist();
+
+        //TODO: To look at when EVERYONE IS AWAKE
+        MovieListController mlc = MovieListController.getInstance();
+        //WatchlistController wlc = WatchlistController.getInstance();
+        WatchlistRepository wlr = WatchlistRepository.getInstance();
+        wlr.addObserver(mlc);
+       //wlr.addObserver(wlc);
+
     }
 
     private void toggleHamburgerTransitionState(){
@@ -139,12 +149,5 @@ public class MainController implements Observer {
         setContent(UIComponent.MOVIELIST.path);
     }
 
-    @Override
-    public void update(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Watchlist");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+
 }

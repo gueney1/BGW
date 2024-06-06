@@ -7,12 +7,15 @@ import at.ac.fhcampuswien.fhmdb.observerPattern.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WatchlistRepository implements Observable{
+public class WatchlistRepository implements Observable {
+
     private static WatchlistRepository instance;
-    private List<Observer> observers;
+
+    private List <Observer> observers;
+
     Dao<WatchlistMovieEntity, Long> dao;
 
-    public WatchlistRepository() throws DataBaseException {
+    private WatchlistRepository() throws DataBaseException {
         observers = new ArrayList<>();
         try {
             this.dao = DatabaseManager.getInstance().getWatchlistDao();
@@ -68,6 +71,7 @@ public class WatchlistRepository implements Observable{
 
     public int removeFromWatchlist(String apiId) throws DataBaseException {
         try {
+            notifyObservers("Movie successfully removed from the list"); //TODO: Check if correct
             return dao.delete(dao.queryBuilder().where().eq("apiId", apiId).query());
         } catch (Exception e) {
             throw new DataBaseException("Error while removing from watchlist");
@@ -83,10 +87,11 @@ public class WatchlistRepository implements Observable{
     public void removeObserver(Observer observer) {
         observers.remove(observer);
     }
+
     @Override
     public void notifyObservers(String message) {
         for (Observer observer : observers) {
-            observer.update("Watchlist updated.");
+            observer.update(message);
         }
     }
 
